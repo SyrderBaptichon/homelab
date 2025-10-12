@@ -1,0 +1,13 @@
+configs
+
+# Kubernetes config files
+kubeconfig
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+
