@@ -1,13 +1,22 @@
 configs
 
-# Kubernetes config files
-kubeconfig
-
 # Environment files
-.env
-.env.local
+**/.env
+**/.env.local
+**/.env*.local
+**/.env.*.local
+
+# Token files
+**/token*
+**/*token
+**/*token*
+**/*-token
+
+# Allow .env.example files
+!**/.env.example
 
 # IDE files
+.DS_Store
 .vscode/
 .idea/
 
