@@ -32,7 +32,7 @@ certificatesResolvers:
   cloudflare:
     acme:
       # caServer: https://acme-v02.api.letsencrypt.org/directory # production (default)
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory # staging (testing)
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory # staging (testing)
       email: dorybaptichon@gmail.com # Cloudflare email (or other provider)
       storage: acme.json
       dnsChallenge:
