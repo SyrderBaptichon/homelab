@@ -1,0 +1,20 @@
+# Traefik static configuration for routing to services on other VMs
+# This file defines routes to services running on separate VMs
+# Replace PI_HOLE_VM_IP with the actual IP address of your pi-hole VM
+
+http:
+  routers:
+    pihole:
+      rule: "Host(`pihole.local`) || Host(`pihole.yourdomain.com`) || Host(`pihole`)"
+      entryPoints:
+        - web
+      service: pihole-service
+
+  services:
+    pihole-service:
+      loadBalancer:
+        servers:
+          - url: "http://PI_HOLE_VM_IP:80"
+        # Pass through the Host header to pi-hole
+        passHostHeader: true
+

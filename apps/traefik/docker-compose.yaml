@@ -1,0 +1,68 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      # HTTP
+      - "80:80"
+      # HTTPS
+      - "443:443"
+      # Traefik Dashboard
+      - "8080:8080"
+    environment:
+      - TZ=Europe/London
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Traefik configuration directory for routing to services on other VMs
+      - ./config:/etc/traefik:ro
+      # Optional: For Let's Encrypt certificates (uncomment if using)
+      # - ./letsencrypt:/letsencrypt
+    command:
+      # Enable Docker provider (for services on this VM)
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      # Enable file provider (for services on other VMs like pi-hole)
+      # Using directory approach for better compatibility
+      - --providers.file.directory=/etc/traefik
+      - --providers.file.watch=true
+      
+      # Entrypoints
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      
+      # Redirect HTTP to HTTPS (uncomment if you have SSL certificates)
+      # - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      # - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      
+      # Enable API and Dashboard (insecure mode - accessible on port 8080)
+      - --api.dashboard=true
+      - --api.insecure=true
+      # Dashboard will be available at http://YOUR_VM_IP:8080
+      # For production, use: --api.insecure=false and configure auth
+      
+      # Optional: Let's Encrypt configuration (uncomment and configure if using)
+      # - --certificatesresolvers.letsencrypt.acme.email=your-email@example.com
+      # - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      # - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      # For production with Let's Encrypt, use:
+      # - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
+      
+      # Logging
+      - --log.level=INFO
+      - --accesslog=true
+      
+      # Global settings
+      - --global.sendAnonymousUsage=false
+    labels:
+      # Enable Traefik for this container (so dashboard is accessible)
+      - "traefik.enable=true"
+      
+      # Dashboard routing
+      - "traefik.http.routers.traefik.rule=Host(`traefik.yourdomain.com`) || Host(`localhost`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
+

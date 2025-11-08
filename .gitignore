@@ -1,5 +1,9 @@
+deploy_pihole.sh
+deploy_traefik.sh
 configs
-deploy_apps.sh
+
+.kiro/
+.rsyncignore
 
 # Environment files
 **/.env
