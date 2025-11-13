@@ -25,3 +25,9 @@ configs
 .vscode/
 .idea/
 
+# Markdown files - ignore all except README files
+*.md
+**/*.md
+# Allow README files
+!README.md
+!**/README.md
