@@ -10,11 +10,35 @@ http:
         - web
       service: pihole-service
 
+    # Portainer routing configuration
+    # Routes portainer.home domain to Portainer instance
+    portainer:
+      rule: "Host(`portainer.home`)"
+      entryPoints:
+        - web
+      service: portainer-service
+
   services:
     pihole-service:
       loadBalancer:
         servers:
-          - url: "http://PI_HOLE_VM_IP:80"
+          - url: "http://192.168.0.104:80"
         # Pass through the Host header to pi-hole
         passHostHeader: true
+
+    # Portainer service configuration
+    # Backend connects to HTTPS Portainer with SSL verification disabled
+    portainer-service:
+      loadBalancer:
+        servers:
+          - url: "https://192.168.0.104:9443"
+        # Use custom transport to handle HTTPS backend with self-signed certificates
+        serversTransport: portainer-transport
+
+  # Server transports configuration for handling SSL/TLS connections to backends
+  serversTransports:
+    # Transport configuration for Portainer HTTPS backend
+    # Disables SSL verification to handle self-signed certificates
+    portainer-transport:
+      insecureSkipVerify: true
 
